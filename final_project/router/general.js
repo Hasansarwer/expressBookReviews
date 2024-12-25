@@ -82,7 +82,7 @@ public_users.get('/author/:author',function (req, res) {
       book_details.push(books[i]);
     }
   }
-  return res.send(JSON.stringify(book_details));
+  return res.send(JSON.stringify({booksbyauthor: book_details}));
 });
 
 // Get all books based on title
@@ -95,7 +95,7 @@ public_users.get('/title/:title',function (req, res) {
       book_details.push(books[i]);
     }
   }
-  return res.send(JSON.stringify(book_details));
+  return res.send(JSON.stringify({booksbytitle: book_details}));
 });
 
 //  Get book review
