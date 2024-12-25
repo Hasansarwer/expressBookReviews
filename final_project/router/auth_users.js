@@ -36,9 +36,9 @@ regd_users.post("/login", (req,res) => {
   }
   if(username && password){
     if(authenticatedUser(username,password)){
-      let token = jwt.sign({data: password}, 'access', {expiresIn: '60'});
+      let token = jwt.sign({data: password}, 'access', {expiresIn: 60*60});
       req.session.autorization = {accessToken: token, username: username};
-      return res.status(200).json({message: "User logged in successfully"});
+      return res.status(200).json({message: "User logged in successfully", token});
     }
   }
   return res.status(400).json({message: "Invalid username or password"});
@@ -49,7 +49,43 @@ regd_users.post("/login", (req,res) => {
 // Add a book review
 regd_users.put("/auth/review/:isbn", (req, res) => {
   //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+  const isbn = req.params.isbn;
+  const {review} = req.body;
+  if(!review){
+    return res.status(400).json({message: "Review not provided"});
+  }
+  if(!req.session.autorization){
+    return res.status(400).json({message: "User not logged in"});
+  }
+  let token = req.session.autorization['accessToken'];
+  jwt.verify(token, 'access', (err, user) => {
+    if (!err) {
+      const username = req.session.autorization['username'];
+      books[isbn].reviews[username] = review;
+      return res.status(200).json({message: "Review added successfully"});
+    } else {
+      return res.status(403).json({message: "User not authenticated"});
+    }
+  });
+});
+
+// Delete a book review
+regd_users.delete("/auth/review/:isbn", (req, res) => {
+  //Write your code here
+  const isbn = req.params.isbn;
+  if(!req.session.autorization){
+    return res.status(400).json({message: "User not logged in"});
+  }
+  let token = req.session.autorization['accessToken'];
+  jwt.verify(token, 'access', (err, user) => {
+    if (!err) {
+      const username = req.session.autorization['username'];
+      delete books[isbn].reviews[username];
+      return res.status(200).json({message: "Review deleted successfully"});
+    } else {
+      return res.status(403).json({message: "User not authenticated"});
+    }
+  });
 });
 
 module.exports.authenticated = regd_users;
