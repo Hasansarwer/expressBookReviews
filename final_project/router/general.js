@@ -4,6 +4,42 @@ let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
 const public_users = express.Router();
 
+const getBooksWithAsyncAwait = async () => {
+  try {
+    const response = await axios.get('http://localhost:5000/');
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const getBookWithISBN = async (isbn) => {
+  try {
+    const response = await axios.get(`http://localhost:5000/isbn/${isbn}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const getBookWithAuthor = async (author) => {
+  try {
+    const response = await axios.get(`http://localhost:5000/author/${author}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const getBookWithTitle = async (title) => {
+  try {
+    const response = await axios.get(`http://localhost:5000/title/${title}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 
 
 //register a user
